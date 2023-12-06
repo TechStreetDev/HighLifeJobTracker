@@ -8,6 +8,7 @@ if (!userData.exists) {
 	return Astro.redirect("/login/")
 }
 
+let initialRank = 0
 function secondsToHms(d) {
     d = Number(d);
     var h = Math.floor(d / 3600);
@@ -40,7 +41,7 @@ function secondsToHms(d) {
 			return (
 				<div id={job.name}>
 					<div class="mt-6 grid lg:grid-cols-4 gap-3">
-						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-3 py-3 grid gap-2">
+						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-3 py-3 grid gap-1">
 							{job.employees.map(employee => {
 								var current = "2000-01-01T12:00"
 								if (employee.sessions != undefined) {
@@ -49,9 +50,15 @@ function secondsToHms(d) {
 
 								var old = new Date(current)
 								var today = new Date();
+								var title = false
 
+								if (initialRank != employee.rank) {
+									title = true
+									initialRank = employee.rank
+								}
 
 								return (
+									<span id="ignore">{title ? <p class="mt-1.5 mb-0.5 uppercase text-xs text-zinc-400 font-bold">{job.ranks[employee.rank - 1]}</p> : ""}</span>
 									<button data-days={Math.floor((today - old) / 1000 / 60 / 60 / 24)} onclick={`updateEmp(${job.employees.indexOf(employee)})`} class="hidden">
 										({Math.floor((today - old) / 1000 / 60 / 60 / 24)}) {employee.name}
 									</button>
@@ -183,16 +190,21 @@ function secondsToHms(d) {
 			}
 		}
 
+		id = 0
 		for (var i = 0; i < children2.length; i++) {
 			var child = children2[i];
-			if (i == Number(main.dataset.emp)) {
-				child.className = "bg-[#439aa4] text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-zinc-100 text-left"
-			} else {
-				days = Number(child.dataset.days)
-				// 28 yellow
-				// 42 orange
-				// 56 red
-				child.className = `${days >= 56 ? "text-red-500" : (days >= 42 ? "text-orange-500" : (days >= 28 ? "text-yellow-400" : "text-zinc-200"))} bg-zinc-700 hover:bg-zinc-600 text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-left`
+			if (!child.id.startsWith("ignore")) {
+				if (id == Number(main.dataset.emp)) {
+					child.className = "bg-[#439aa4] text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-zinc-100 text-left"
+				} else {
+					days = Number(child.dataset.days)
+					// 28 yellow
+					// 42 orange
+					// 56 red
+					child.className = `${days >= 56 ? "text-red-500" : (days >= 42 ? "text-orange-500" : (days >= 28 ? "text-yellow-400" : "text-zinc-200"))} bg-zinc-700 hover:bg-zinc-600 text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-left`
+				}
+				
+				id += 1
 			}
 		}
 
