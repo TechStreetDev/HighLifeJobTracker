@@ -27,7 +27,7 @@ function secondsToHms(d) {
 			<p class="text-sm text-zinc-300">The Unofficial</p>
 			<p class="text-4xl font-semibold">HighLife Job Tracker</p>
 			<p class="text-sm text-zinc-400 mt-3">A job activity tracker to parse data from live clock in channels and provide with a interactive dashboard for the data, maintained by techstreet.</p>
-			<select onchange="updateSelected()" id="selected-job" class="w-52 mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
+			<select onchange="resetSelected()" id="selected-job" class="w-52 mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
 				{userData.permissions.map(perm => {
 					return <option value={perm}>{perm}</option>
 				})}
@@ -326,6 +326,12 @@ function secondsToHms(d) {
 	function updateEmp(i) {
 		main = document.getElementById("main");
 		main.dataset.emp = String(i)
+		updateSelected()
+	}
+
+	function resetSelected(i) {
+		main = document.getElementById("main");
+		main.dataset.emp = String(0)
 		updateSelected()
 	}
 
