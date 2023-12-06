@@ -32,8 +32,6 @@ function secondsToHms(d) {
 					return <option value={perm}>{perm}</option>
 				})}
 			</select>
-
-			<input type="file" class="rounded-lg bg-zinc-800 mt-2 w-64" name="inputfile" id="inputfile">
 		</div>
 	</div>
 
@@ -133,6 +131,13 @@ function secondsToHms(d) {
 			)
 		})}
 	</div>
+	<div class="m-6 mt-0 mr-16 ml-16 grid lg:grid-cols-3 unhighlightable">
+		<div class="text-center lg:text-left mb-12 lg:ml-6">
+			<p class="text-sm text-zinc-300">Import Data (Only use this if you know how to)</p>
+			<input type="file" class="rounded-lg bg-zinc-800 mt-2 w-64" name="inputfile" id="inputfile">
+		</div>
+	</div>
+
 </App>
 
 <script client::only>    
