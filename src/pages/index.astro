@@ -60,7 +60,7 @@ function secondsToHms(d) {
 								return (
 									<span id="ignore">{title ? <p class="mt-1.5 mb-0.5 uppercase text-xs text-zinc-400 font-bold">{job.ranks[employee.rank - 1]}</p> : ""}</span>
 									<button data-days={Math.floor((today - old) / 1000 / 60 / 60 / 24)} onclick={`updateEmp(${job.employees.indexOf(employee)})`} class="hidden">
-										({Math.floor((today - old) / 1000 / 60 / 60 / 24)}) {employee.name}
+										{employee.callsign} - {employee.name}
 									</button>
 								)
 							})}
@@ -107,7 +107,7 @@ function secondsToHms(d) {
 										
 														<div class="bg-zinc-700 rounded-lg">
 															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-hammer"></i></h1>
-															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Session</h1>
+															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Shift</h1>
 															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{employee.sessions != undefined ? new Date(employee.sessions[0].date).toLocaleString("en-GB").slice(0, -3) : "None"}</h1>
 														</div>
 														
@@ -135,7 +135,7 @@ function secondsToHms(d) {
 												</div>
 
 												<div class="bg-zinc-700 rounded-lg px-3 py-2">
-													<p class="text-lg font-semibold text-zinc-200">Flagged Sessions</p>
+													<p class="text-lg font-semibold text-zinc-200">Flagged Shifts</p>
 													<div>
 														{employee.sessions != undefined ? employee.sessions.map(session => {
 															var old = new Date(session.date)
