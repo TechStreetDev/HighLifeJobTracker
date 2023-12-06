@@ -60,7 +60,7 @@ function secondsToHms(d) {
 								return (
 									<span id="ignore">{title ? <p class="mt-1.5 mb-0.5 uppercase text-xs text-zinc-400 font-bold">{job.ranks[employee.rank - 1]}</p> : ""}</span>
 									<button data-days={Math.floor((today - old) / 1000 / 60 / 60 / 24)} onclick={`updateEmp(${job.employees.indexOf(employee)})`} class="hidden">
-										{employee.callsign} - {employee.name}
+										{employee.name} ({employee.callsign})
 									</button>
 								)
 							})}
@@ -162,8 +162,8 @@ function secondsToHms(d) {
 	</div>
 	<div class="m-6 mt-0 mr-16 ml-16 grid lg:grid-cols-3 unhighlightable">
 		<div class="text-center lg:text-left mb-12 lg:ml-6">
-			<p class="text-sm text-zinc-300">Import Data (Only use this if you know how to)</p>
-			<input type="file" class="rounded-lg bg-zinc-800 mt-2 w-64" name="inputfile" id="inputfile">
+			<p class="text-sm text-zinc-500">Import Data (Only use this if you know how to)</p>
+			<input type="file" class="rounded-lg bg-zinc-800 mt-2 w-64 text-zinc-400" name="inputfile" id="inputfile">
 		</div>
 	</div>
 
