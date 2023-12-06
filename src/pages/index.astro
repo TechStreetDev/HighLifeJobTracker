@@ -73,10 +73,12 @@ function secondsToHms(d) {
 								if (employee.sessions != null) {
 									employee.sessions.map(session => {
 										total += session.length
-										if (timeMap[session.month]) {
-											timeMap[session.month] = timeMap[session.month] + session.length
-										} else {
-											timeMap[session.month] = session.length
+										if (Object.keys(timeMap).length < 12) {
+											if (timeMap[session.month]) {
+												timeMap[session.month] = timeMap[session.month] + session.length
+											} else {
+												timeMap[session.month] = session.length
+											}
 										}
 									})
 								}
@@ -87,40 +89,60 @@ function secondsToHms(d) {
 										<p class="text-sm text-zinc-400 ml-2">{employee.steam}</p>
 
 										<div class="mx-auto text-center">
-											<div class="m-2 mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-												<div class="bg-zinc-700 rounded-lg">
-													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>
-													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Total Time</h1>
-													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(total)}</h1>
-												</div>
-								
-												<div class="bg-zinc-700 rounded-lg">
-													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-hammer"></i></h1>
-													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Session</h1>
-													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{employee.sessions != undefined ? new Date(employee.sessions[0].date).toLocaleString("en-GB").slice(0, -3) : "None"}</h1>
-												</div>
-												
-												<div class="bg-zinc-700 rounded-lg">
-													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-eye"></i></h1>
-													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Last Seen</h1>
-													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{Math.floor((today - old) / 1000 / 60 / 60 / 24)} days ago</h1>
-												</div>
-											</div>  
-
-											<div class="m-2 mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-												{Object.keys(timeMap).map(key => {
-													const date = new Date(Number(key.split("-")[0]), Number(key.split("-")[1]) - 1, 1);  // 2009-11-10
-													const month = date.toLocaleString('default', { month: 'long' });
-
-													return (
+											<div class="m-2 mt-4 grid gap-3 lg:grid-cols-4">
+												<div class="col-span-3">
+													<div class="grid gap-3 lg:grid-cols-3">
 														<div class="bg-zinc-700 rounded-lg">
-															<!--<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>-->
-															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">{month}, {Number(key.split("-")[0])}</h1>
-															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(timeMap[key])}</h1>
+															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>
+															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Total Time</h1>
+															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(total)}</h1>
 														</div>
-													)
-												})}
-											</div>  
+										
+														<div class="bg-zinc-700 rounded-lg">
+															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-hammer"></i></h1>
+															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Session</h1>
+															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{employee.sessions != undefined ? new Date(employee.sessions[0].date).toLocaleString("en-GB").slice(0, -3) : "None"}</h1>
+														</div>
+														
+														<div class="bg-zinc-700 rounded-lg">
+															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-eye"></i></h1>
+															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Last Seen</h1>
+															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{Math.floor((today - old) / 1000 / 60 / 60 / 24)} days ago</h1>
+														</div>
+													</div>  
+
+													<div class="mt-8 grid gap-3 lg:grid-cols-3">
+														{Object.keys(timeMap).map(key => {
+															const date = new Date(Number(key.split("-")[0]), Number(key.split("-")[1]) - 1, 1);  // 2009-11-10
+															const month = date.toLocaleString('default', { month: 'long' });
+
+															return (
+																<div class="bg-zinc-700 rounded-lg">
+																	<!--<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>-->
+																	<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">{month}, {Number(key.split("-")[0])}</h1>
+																	<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(timeMap[key])}</h1>
+																</div>
+															)
+														})}
+													</div>  
+												</div>
+
+												<div class="bg-zinc-700 rounded-lg px-3 py-2">
+													<p class="text-lg font-semibold text-zinc-200">Flagged Sessions</p>
+													<div>
+														{employee.sessions != undefined ? employee.sessions.map(session => {
+															var old = new Date(session.date)
+															var today = new Date();
+
+															if (session.length < 1800 && session.length > 4 && Math.floor((today - old) / 1000 / 60 / 60 / 24) < 30) {
+																return (
+																	<p class="text-sm mb-0.5 text-zinc-300">{new Date(session.date).toLocaleString("en-GB").slice(0, -3)} - {secondsToHms(session.length)}</p>
+																)
+															}
+														}) : ""}
+													</div>
+												</div>
+											</div>
 										</div>
 									</div>
 								)
