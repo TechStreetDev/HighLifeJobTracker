@@ -1,7 +1,7 @@
 export interface APIErrorResponse { readonly error: string };
 
 export default class API {
-	static APIBase = "https://api.astrono.net/highlife";
+	static APIBase = "https://api.techstreet.tech/highlife";
 
 	static handleFetchErr(reason: any): APIErrorResponse {
 		return { error: (reason.error || reason.message || reason) as string } as const;

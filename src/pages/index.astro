@@ -3,7 +3,6 @@ import App from "../App.astro";
 import getUser from "../api/User";
 
 const userData = await getUser(Astro.cookies.get("access_token").value)
-console.log(userData)
 if (!userData.exists) {
 	return Astro.redirect("/login/")
 }
@@ -17,7 +16,7 @@ function secondsToHms(d) {
 
     var hDisplay = h > 0 ? h + (h == 1 ? "h, " : "h, ") : "";
     var mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "0m";
-    return hDisplay + mDisplay; 
+    return hDisplay + mDisplay;
 }
 
 ---
@@ -28,7 +27,7 @@ function secondsToHms(d) {
 			<p class="text-sm text-zinc-300">The Unofficial</p>
 			<p class="text-4xl font-semibold">HighLife Job Tracker</p>
 			<p class="text-sm text-zinc-400 mt-3">A job activity tracker to parse data from live clock in channels and provide with a interactive dashboard for the data, maintained by techstreet.</p>
-			<select onchange="updateSelected()" id="selected-job" class="w-52 mt-2 py-2 px-3 text-xs border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
+			<select onchange="updateSelected()" id="selected-job" class="w-52 mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
 				{userData.permissions.map(perm => {
 					return <option value={perm}>{perm}</option>
 				})}
@@ -41,7 +40,7 @@ function secondsToHms(d) {
 			return (
 				<div id={job.name}>
 					<div class="mt-6 grid lg:grid-cols-4 gap-3">
-						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-3 py-3 grid gap-1">
+						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-4 py-3 grid gap-1">
 							{job.employees.map(employee => {
 								var current = "2000-01-01T12:00"
 								if (employee.sessions != undefined) {
@@ -104,19 +103,19 @@ function secondsToHms(d) {
 															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Total Time</h1>
 															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(total)}</h1>
 														</div>
-										
+
 														<div class="bg-zinc-700 rounded-lg">
 															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-hammer"></i></h1>
 															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Shift</h1>
 															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{employee.sessions != undefined ? new Date(employee.sessions[0].date).toLocaleString("en-GB").slice(0, -3) : "None"}</h1>
 														</div>
-														
+
 														<div class="bg-zinc-700 rounded-lg">
 															<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-eye"></i></h1>
 															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Last Seen</h1>
 															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{Math.floor((today - old) / 1000 / 60 / 60 / 24)} days ago</h1>
 														</div>
-													</div>  
+													</div>
 
 													<div class="mt-8 grid gap-3 lg:grid-cols-3">
 														{Object.keys(timeMap).map(key => {
@@ -131,7 +130,7 @@ function secondsToHms(d) {
 																</div>
 															)
 														})}
-													</div>  
+													</div>
 												</div>
 
 												<div class="bg-zinc-700 rounded-lg px-3 py-2">
@@ -169,7 +168,7 @@ function secondsToHms(d) {
 
 </App>
 
-<script client::only>    
+<script client::only>
 	function updateSelected() {
 		filter = document.getElementById("selected-job").value
 		main = document.getElementById("main");
@@ -203,7 +202,7 @@ function secondsToHms(d) {
 					// 56 red
 					child.className = `${days >= 56 ? "text-red-500" : (days >= 42 ? "text-orange-500" : (days >= 28 ? "text-yellow-400" : "text-zinc-200"))} bg-zinc-700 hover:bg-zinc-600 text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-left`
 				}
-				
+
 				id += 1
 			}
 		}
@@ -219,7 +218,7 @@ function secondsToHms(d) {
 
 		main.scrollIntoView({behavior: 'smooth'})
 	}
-	
+
 	function updateEmp(i) {
 		main = document.getElementById("main");
 		main.dataset.emp = String(i)
@@ -230,15 +229,13 @@ function secondsToHms(d) {
 		.addEventListener('change', function () {
 			let fr = new FileReader();
 			fr.onload = function () {
-				console.log(fr.result)
 				document.getElementById('output')
 					filter = document.getElementById("selected-job").value
-					fetch(`https://api.astrono.net/highlife/import/?token=${getCookie("access_token")}&job=${filter}`, {
+					fetch(`https://api.techstreet.tech/highlife/import/?token=${getCookie("access_token")}&job=${filter}`, {
 						method: "POST",
 						body: fr.result
 					}).then(response => response.text())
 						.then(res => {
-							const out = JSON.parse(res)
 							location.reload()
 						})
 			}
@@ -246,7 +243,7 @@ function secondsToHms(d) {
 			fr.readAsText(this.files[0]);
 		})
 
-			
+
 	function importData() {
 		filter = document.getElementById("selected-job").value
 
@@ -254,7 +251,7 @@ function secondsToHms(d) {
 		header.append('X-Token', getCookie("access_token"));
 		header.append('X-Job', filter);
 
-		fetch(`https://api.astrono.net/highlife/import/?token=${getCookie("access_token")}&job=${filter}`)
+		fetch(`https://api.techstreet.tech/highlife/import/?token=${getCookie("access_token")}&job=${filter}`)
 			.then(response => response.text())
 			.then(res => {
 				const out = JSON.parse(res)
