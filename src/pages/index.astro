@@ -135,10 +135,10 @@ function secondsToHms(d) {
 										<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{employee.name}</p>
 										<p class="text-sm text-zinc-400 ml-2">{employee.steam}</p>
 
-										<button data-modal-target={`${employee.steam}-edit-modal`} data-modal-toggle={`${employee.steam}-edit-modal`} type="button" class="mt-1 ml-2 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Edit</button>
-										<button data-modal-target={`${employee.steam}-delete-modal`} data-modal-toggle={`${employee.steam}-delete-modal`} type="button" class="mt-1 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Delete</button>
+										<button data-modal-target={`${job.name}-${employee.steam}-edit-modal`} data-modal-toggle={`${job.name}-${employee.steam}-edit-modal`} type="button" class="mt-1 ml-2 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Edit</button>
+										<button data-modal-target={`${job.name}-${employee.steam}-delete-modal`} data-modal-toggle={`${job.name}-${employee.steam}-delete-modal`} type="button" class="mt-1 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Delete</button>
 
-										<div id={`${employee.steam}-edit-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+										<div id={`${job.name}-${employee.steam}-edit-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 											<div class="relative w-full max-w-md max-h-full">
 												<div class="relative rounded-lg shadow bg-zinc-700">
 													<button type="button" class="absolute top-3 right-2.5 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-zinc-600 hover:text-white" data-modal-hide={`${employee.steam}-edit-modal`}>
@@ -178,7 +178,7 @@ function secondsToHms(d) {
 											</div>
 										</div>
 
-										<div id={`${employee.steam}-delete-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+										<div id={`${job.name}-${employee.steam}-delete-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 											<div class="relative w-full max-w-md max-h-full">
 												<div class="relative rounded-lg shadow bg-zinc-700">
 													<button type="button" class="absolute top-3 right-2.5 bg-transparent rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center hover:bg-zinc-600 hover:text-white" data-modal-hide={`${employee.steam}-delete-modal`}>
@@ -296,10 +296,11 @@ function secondsToHms(d) {
 		for (var i = 0; i < children2.length; i++) {
 			var child = children2[i];
 			if (!child.id.startsWith("ignore")) {
+				days = Number(child.dataset.days)
+
 				if (id == Number(main.dataset.emp)) {
-					child.className = "bg-[#439aa4] text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-zinc-100 text-left"
+					child.className = `bg-[#439aa4] text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-zinc-100 text-left`
 				} else {
-					days = Number(child.dataset.days)
 					// 28 yellow
 					// 42 orange
 					// 56 red
