@@ -1,0 +1,17 @@
+---
+import API from "../api/API";
+
+const code = Astro.url.searchParams.get("accessCode");
+
+if(!code) {
+	return Astro.redirect(`${API.APIBase}/auth/?res=${encodeURIComponent(Astro.url.origin + "/")}`);
+} else {
+	const moment = new Date();
+	moment.setUTCDate(moment.getDate()+15);
+	Astro.cookies.set("access_token", code, {
+		expires: moment, secure: true, path: "/", sameSite: "lax"
+	});
+
+	return Astro.redirect("/");
+}
+---

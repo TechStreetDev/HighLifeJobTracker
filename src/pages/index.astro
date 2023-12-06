@@ -1,0 +1,233 @@
+---
+import App from "../App.astro";
+import getUser from "../api/User";
+
+const userData = await getUser(Astro.cookies.get("access_token").value)
+console.log(userData)
+if (!userData.exists) {
+	return Astro.redirect("/login/")
+}
+
+function secondsToHms(d) {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor(d % 3600 / 60);
+    var s = Math.floor(d % 3600 % 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? "h, " : "h, ") : "";
+    var mDisplay = m > 0 ? m + (m == 1 ? "m" : "m") : "0m";
+    return hDisplay + mDisplay; 
+}
+
+---
+
+<App articleMode useHeader>
+	<div class="m-6 mr-16 ml-16 grid lg:grid-cols-3 unhighlightable">
+		<div class="text-center lg:text-left mt-12 lg:ml-6">
+			<p class="text-sm text-zinc-300">The Unofficial</p>
+			<p class="text-4xl font-semibold">HighLife Job Tracker</p>
+			<p class="text-sm text-zinc-400 mt-3">A job activity tracker to parse data from live clock in channels and provide with a interactive dashboard for the data.</p>
+			<select onchange="updateSelected()" id="selected-job" class="w-52 mt-2 py-2 px-3 text-xs border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
+				{userData.permissions.map(perm => {
+					return <option value={perm}>{perm}</option>
+				})}
+			</select>
+
+			<input type="file" class="rounded-lg bg-zinc-800 mt-2 w-64" name="inputfile" id="inputfile">
+		</div>
+	</div>
+
+	<div id="main" data-emp="0" class="m-6 mt-0 mr-16 ml-16 unhighlightable">
+		{userData.jobs.map(job => {
+			return (
+				<div id={job.name}>
+					<div class="mt-6 grid lg:grid-cols-4 gap-3">
+						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-3 py-3 grid gap-2">
+							{job.employees.map(employee => {
+								var current = "2000-01-01T12:00"
+								if (employee.sessions != undefined) {
+									current = employee.sessions[0].date
+								}
+
+								var old = new Date(current)
+								var today = new Date();
+
+
+								return (
+									<button data-days={Math.floor((today - old) / 1000 / 60 / 60 / 24)} onclick={`updateEmp(${job.employees.indexOf(employee)})`} class="hidden">
+										({Math.floor((today - old) / 1000 / 60 / 60 / 24)}) {employee.name}
+									</button>
+								)
+							})}
+						</div>
+						<div id={`${job.name}-employ-d`} class="h-min bg-zinc-800 rounded-lg lg:col-span-3 px-4 py-3">
+							{job.employees.map(employee => {
+								let total = 0
+								let timeMap = {};
+								var current = "2000-01-01T12:00"
+								if (employee.sessions != undefined) {
+									current = employee.sessions[0].date
+								}
+
+								var old = new Date(current)
+								var today = new Date();
+
+								if (employee.sessions != null) {
+									employee.sessions.map(session => {
+										total += session.length
+										if (timeMap[session.month]) {
+											timeMap[session.month] = timeMap[session.month] + session.length
+										} else {
+											timeMap[session.month] = session.length
+										}
+									})
+								}
+
+								return (
+									<div>
+										<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{employee.name}</p>
+										<p class="text-sm text-zinc-400 ml-2">{employee.steam}</p>
+
+										<div class="mx-auto text-center">
+											<div class="m-2 mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+												<div class="bg-zinc-700 rounded-lg">
+													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>
+													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Total Time</h1>
+													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(total)}</h1>
+												</div>
+								
+												<div class="bg-zinc-700 rounded-lg">
+													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-hammer"></i></h1>
+													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Latest Session</h1>
+													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{employee.sessions != undefined ? new Date(employee.sessions[0].date).toLocaleString("en-GB").slice(0, -3) : "None"}</h1>
+												</div>
+												
+												<div class="bg-zinc-700 rounded-lg">
+													<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-solid fa-xl fa-eye"></i></h1>
+													<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">Last Seen</h1>
+													<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{Math.floor((today - old) / 1000 / 60 / 60 / 24)} days ago</h1>
+												</div>
+											</div>  
+
+											<div class="m-2 mt-8 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+												{Object.keys(timeMap).map(key => {
+													const date = new Date(Number(key.split("-")[0]), Number(key.split("-")[1]) - 1, 1);  // 2009-11-10
+													const month = date.toLocaleString('default', { month: 'long' });
+
+													return (
+														<div class="bg-zinc-700 rounded-lg">
+															<!--<h1 class="mt-6 text-2xl tracking-tight font-semibold text-zinc-300"><i class="fa-regular fa-xl fa-clock"></i></h1>-->
+															<h1 class="mt-4 text-lg tracking-tight font-semibold text-zinc-300">{month}, {Number(key.split("-")[0])}</h1>
+															<h1 class="mb-4 text-lg tracking-tight font-semibold text-[#439aa4]">{secondsToHms(timeMap[key])}</h1>
+														</div>
+													)
+												})}
+											</div>  
+										</div>
+									</div>
+								)
+							})}
+						</div>
+					</div>
+				</div>
+			)
+		})}
+	</div>
+</App>
+
+<script client::only>    
+	function updateSelected() {
+		filter = document.getElementById("selected-job").value
+		main = document.getElementById("main");
+		children = main.children
+
+		employees = document.getElementById(`${filter}-employ`);
+		children2 = employees.children
+
+		employees2 = document.getElementById(`${filter}-employ-d`);
+		children3 = employees2.children
+
+		for (var i = 0; i < children.length; i++) {
+			var child = children[i];
+			if (child.id.startsWith(filter)) {
+				child.className = "mb-12 lg:ml-6 lg:mr-6"
+			} else {
+				child.className = "hidden"
+			}
+		}
+
+		for (var i = 0; i < children2.length; i++) {
+			var child = children2[i];
+			if (i == Number(main.dataset.emp)) {
+				child.className = "bg-[#439aa4] text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-zinc-100 text-left"
+			} else {
+				days = Number(child.dataset.days)
+				// 28 yellow
+				// 42 orange
+				// 56 red
+				child.className = `${days >= 56 ? "text-red-500" : (days >= 42 ? "text-orange-500" : (days >= 28 ? "text-yellow-400" : "text-zinc-200"))} bg-zinc-700 hover:bg-zinc-600 text-[0.8rem] transition-colors px-3 py-1 rounded-lg text-left`
+			}
+		}
+
+		for (var i = 0; i < children3.length; i++) {
+			var child = children3[i];
+			if (i == Number(main.dataset.emp)) {
+				child.className = "visible"
+			} else {
+				child.className = "hidden"
+			}
+		}
+
+		main.scrollIntoView({behavior: 'smooth'})
+	}
+	
+	function updateEmp(i) {
+		main = document.getElementById("main");
+		main.dataset.emp = String(i)
+		updateSelected()
+	}
+
+	document.getElementById('inputfile')
+		.addEventListener('change', function () {
+			let fr = new FileReader();
+			fr.onload = function () {
+				console.log(fr.result)
+				document.getElementById('output')
+					filter = document.getElementById("selected-job").value
+					fetch(`https://api.astrono.net/highlife/import/?token=${getCookie("access_token")}&job=${filter}`, {
+						method: "POST",
+						body: fr.result
+					}).then(response => response.text())
+						.then(res => {
+							const out = JSON.parse(res)
+							location.reload()
+						})
+			}
+
+			fr.readAsText(this.files[0]);
+		})
+
+			
+	function importData() {
+		filter = document.getElementById("selected-job").value
+
+		let header = new Headers();
+		header.append('X-Token', getCookie("access_token"));
+		header.append('X-Job', filter);
+
+		fetch(`https://api.astrono.net/highlife/import/?token=${getCookie("access_token")}&job=${filter}`)
+			.then(response => response.text())
+			.then(res => {
+				const out = JSON.parse(res)
+				location.reload()
+			})
+	}
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+	updateSelected()
+</script>
