@@ -237,6 +237,7 @@ function secondsToHms(d) {
 
 												<div class="bg-zinc-700 rounded-lg px-3 py-2">
 													<p class="text-lg font-semibold text-zinc-200">Flagged Shifts</p>
+													<p class="text-xs italic text-zinc-300 mb-3">Shifts will show here if they are less then 30 minutes in length.</p>
 													<div>
 														{employee.sessions != undefined ? employee.sessions.map(session => {
 															var old = new Date(session.date)
