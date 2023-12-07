@@ -125,6 +125,7 @@ function secondsToHms(d) {
 									<span id="ignore">{title ? <p class="mt-1.5 mb-0.5 uppercase text-xs text-zinc-400 font-bold">{job.ranks[employee.rank - 1]}</p> : ""}</span>
 									<button data-days={Math.floor((today - old) / 1000 / 60 / 60 / 24)} onclick={`updateEmp(${job.employees.indexOf(employee)})`} class="hidden">
 										{employee.name} ({employee.callsign}) {flagged >= 1 ? <!--<a class="absolute bottom-1 right-1 rounded-full bg-red-500 w-5 h-5"><p class="text-center">{flagged}</p></a>--> : ""}
+										{employee.discord == "0" ? <i class="absolute bottom-3.5 right-1 fa-xl fa-solid fa-triangle-exclamation text-red-500"></i> : ""}
 									</button>
 								)
 							})}
