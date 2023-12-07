@@ -352,7 +352,7 @@ function secondsToHms(d) {
 									</div>
 								</div>
 							</div>
-						</div>	
+						</div>
 					</div>
 				</div>
 			)
@@ -423,23 +423,22 @@ function secondsToHms(d) {
 		location.replace("?j=" + document.getElementById("selected-job").value)
 	}
 
-	document.getElementById('inputfile')
-		.addEventListener('change', function () {
-			let fr = new FileReader();
-			fr.onload = function () {
-				document.getElementById('output')
-					filter = document.getElementById("selected-job").value
-					fetch(`https://api.techstreet.tech/highlife/import/?token=${getCookie("access_token")}&job=${filter}`, {
-						method: "POST",
-						body: fr.result
-					}).then(response => response.text())
-						.then(res => {
-							location.reload()
-						})
-			}
+	document.getElementById('inputfile').addEventListener('change', function () {
+		let fr = new FileReader();
+		fr.onload = function () {
+			document.getElementById('output')
+				filter = document.getElementById("selected-job").value
+				fetch(`https://api.techstreet.tech/highlife/import/?token=${getCookie("access_token")}&job=${filter}`, {
+					method: "POST",
+					body: fr.result
+				}).then(response => response.text())
+					.then(res => {
+						location.reload()
+					})
+		}
 
-			fr.readAsText(this.files[0]);
-		})
+		fr.readAsText(this.files[0]);
+	})
 
 
 	function importData() {
