@@ -340,7 +340,9 @@ function secondsToHms(d) {
 													<span class="text-zinc-400">{log.user}</span> <span class="text-zinc-500 italic">({new Date(Number(log.time * 1000)).toLocaleString("en-GB")})</span>
 													<p>{log.msg}</p>
 													{log.comments.map(comment => {
-														return <p class="ml-4"> - {comment}</p>
+														if (comment != "" && comment != " ") {
+															return <p class="ml-4"> - {comment}</p>
+														}
 													})}
 												</div>
 											)
