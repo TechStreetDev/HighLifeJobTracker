@@ -461,11 +461,11 @@ function secondsToHms(d) {
 	function createEmployee(job) {
 		error = document.getElementById(job + "-create-error")
 		button = document.getElementById(job + "-create")
-		steam = document.getElementById(job + "-create-steam").value.replace(/\s{2,}/g, ' ').trim() 
-		name = document.getElementById(job + "-create-name").value.replace(/\s{2,}/g, ' ').trim() 
-		callsign = document.getElementById(job + "-create-callsign").value.replace(/\s{2,}/g, ' ').trim() 
+		steam = document.getElementById(job + "-create-steam").value.trim() 
+		name = document.getElementById(job + "-create-name").value.trim() 
+		callsign = document.getElementById(job + "-create-callsign").value.trim() 
 		rank = document.getElementById(job + "-create-rank").value
-		discord = document.getElementById(job + "-create-discord").value.replace(/\s{2,}/g, ' ').trim() 
+		discord = document.getElementById(job + "-create-discord").value.trim() 
 
 		if (discord == "" || discord == "0" || !(Number(discord))) {
 			error.innerHTML = "Please use a valid discord id, a discord id must just be numbers"
@@ -508,10 +508,10 @@ function secondsToHms(d) {
 	function editEmployee(job, steam) {
 		error = document.getElementById(job + "-" + steam + "-error")
 		button = document.getElementById(job + "-" + steam)
-		name = document.getElementById(job + "-" + steam + "-name").value.replace(/\s{2,}/g, ' ').trim() 
-		callsign = document.getElementById(job + "-" + steam + "-callsign").value.replace(/\s{2,}/g, ' ').trim() 
+		name = document.getElementById(job + "-" + steam + "-name").value.trim() 
+		callsign = document.getElementById(job + "-" + steam + "-callsign").value.trim() 
 		rank = document.getElementById(job + "-" + steam + "-rank").value
-		discord = document.getElementById(job + "-" + steam + "-discord").value.replace(/\s{2,}/g, ' ').trim() 
+		discord = document.getElementById(job + "-" + steam + "-discord").value.trim() 
 
 		if (discord == "" || discord == "0" || !(Number(discord))) {
 			error.innerHTML = "Please use a valid discord id, a discord id must just be numbers"
