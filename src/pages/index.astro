@@ -10,6 +10,10 @@ if (!userData.exists) {
 	return Astro.redirect("/login/")
 }
 
+if (selected == undefined) {
+	return Astro.redirect("?j=" + userData.permissions[0] + "#Overview-0")
+}
+
 if (userData.jobs[0].rank == undefined) {
 	userData.jobs[0].rank = 99
 }
