@@ -10,6 +10,10 @@ if (!userData.exists) {
 	return Astro.redirect("/login/")
 }
 
+if (userData.jobs[0].rank == undefined) {
+	userData.jobs[0].rank = 99
+}
+
 let initialRank = 0
 function secondsToHms(d) {
     d = Number(d);
@@ -22,11 +26,14 @@ function secondsToHms(d) {
     return hDisplay + mDisplay;
 }
 
-const pages = [
+let pages = [
 	"Overview",
-	"Employee Tracker",
-	"Settings"
+	"Employee Tracker"
 ]
+
+if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
+	pages.push("Settings")
+}
 
 ---
 
@@ -97,7 +104,7 @@ const pages = [
 				</div>
 
 				<div id={`${job.name}-Settings`} class="hidden">
-					<div class="lg:col-span-4 grid lg:grid-cols-2 gap-3">
+					{job.rank >= job.setting.modify_settings.value ? <div class="lg:col-span-4 grid lg:grid-cols-2 gap-3">
 						<div>
 							<div class="bg-zinc-800 rounded-lg px-4 py-3">
 								<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{job.name} Permissions</p>
@@ -152,7 +159,7 @@ const pages = [
 								</div>
 							</div>
 						</div>
-					</div>
+					</div> : ""}
 				</div>
 
 				<div id={`${job.name}-Employee Tracker`} class="hidden">
@@ -201,6 +208,7 @@ const pages = [
 						</div>
 
 						<div id={`${job.name}-employ`} class="h-min bg-zinc-800 rounded-lg px-4 py-3 grid gap-1">
+							{job.rank >= job.setting.modify_employees.value ? <button data-modal-target={`${job.name}-create-modal`} data-modal-toggle={`${job.name}-create-modal`} id="ignore" type="button" class="px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Create Employee</button> : ""}
 							<span id="ignore"><p class="mt-1.5 mb-0.5 uppercase text-xs text-zinc-400 font-bold">Colour Information</p></span>
 							<div id="ignore" class="grid text-xs mb-2">
 								<p class="text-red-500">Last clocked in more than 56 days ago</p>
@@ -242,8 +250,6 @@ const pages = [
 									</button>
 								)
 							})}
-
-							<button id="ignore" data-modal-target={`${job.name}-create-modal`} data-modal-toggle={`${job.name}-create-modal`} type="button" class="mt-3 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Create Employee</button>
 						</div>
 						<div id={`${job.name}-employ-d`} class="h-min bg-zinc-800 rounded-lg lg:col-span-3 px-4 py-3">
 							{job.employees.map(employee => {
@@ -278,8 +284,8 @@ const pages = [
 										<p class="text-sm text-zinc-400 ml-2">{employee.steam}</p>
 										<p class="text-sm text-zinc-400 ml-2">discord:{employee.discord}</p>
 
-										<button data-modal-target={`${job.name}-${employee.steam}-edit-modal`} data-modal-toggle={`${job.name}-${employee.steam}-edit-modal`} type="button" class="mt-1 ml-2 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Edit</button>
-										<button data-modal-target={`${job.name}-${employee.steam}-delete-modal`} data-modal-toggle={`${job.name}-${employee.steam}-delete-modal`} type="button" class="mt-1 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Delete</button>
+										{job.rank >= job.setting.modify_employees.value ? <button data-modal-target={`${job.name}-${employee.steam}-edit-modal`} data-modal-toggle={`${job.name}-${employee.steam}-edit-modal`} type="button" class="mt-1 ml-2 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Edit</button> : ""}
+										{job.rank >= job.setting.modify_employees.value ? <button data-modal-target={`${job.name}-${employee.steam}-delete-modal`} data-modal-toggle={`${job.name}-${employee.steam}-delete-modal`} type="button" class="mt-1 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Delete</button> : ""}
 
 										<div id={`${job.name}-${employee.steam}-edit-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 											<div class="relative w-full max-w-md max-h-full">
