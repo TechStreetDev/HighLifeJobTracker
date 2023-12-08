@@ -2,12 +2,14 @@
 import App from "../App.astro";
 import getUser from "../api/User";
 
-const userData = await getUser(Astro.cookies.get("access_token").value)
+const selected = Astro.url.searchParams.get("j")
+const selpg = Astro.url.searchParams.get("p")
+
+const userData = await getUser(Astro.cookies.get("access_token").value, selected)
 if (!userData.exists) {
 	return Astro.redirect("/login/")
 }
 
-const selected = Astro.url.searchParams.get("j")
 let initialRank = 0
 function secondsToHms(d) {
     d = Number(d);
@@ -20,6 +22,12 @@ function secondsToHms(d) {
     return hDisplay + mDisplay;
 }
 
+const pages = [
+	"Overview",
+	"Employee Tracker",
+	"Settings"
+]
+
 ---
 
 <App articleMode useHeader>
@@ -28,23 +36,127 @@ function secondsToHms(d) {
 			<p class="text-sm text-zinc-300">The Unofficial</p>
 			<p class="text-4xl font-semibold">HighLife Job Tracker</p>
 			<p class="text-sm text-zinc-400 mt-3">A job activity tracker to parse data from live clock in channels and provide with a interactive dashboard for the data, maintained by techstreet.</p>
-			<select onchange="resetSelected()" id="selected-job" class="w-52 mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 border-transparent focus:border-transparent focus:ring-0">
-				{userData.permissions.map(perm => {
-					if (selected == perm) {
-						return <option selected value={perm}>{perm}</option>
-					} else {
-						return <option value={perm}>{perm}</option>
-					}
-				})}
-			</select>
+			<div class="flex gap-3">
+				<select onchange="resetSelected()" id="selected-job" class="mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 focus:border-zinc-600 focus:ring-0">
+					{userData.permissions.map(perm => {
+						if (selected == perm) {
+							return <option selected value={perm}>{perm}</option>
+						} else {
+							return <option value={perm}>{perm}</option>
+						}
+					})}
+				</select>
+	
+				<select onchange="updateSelected()" id="selected-page" class="mt-2 py-1 px-3 text-sm border rounded-lg bg-zinc-700 border-zinc-600 placeholder-zinc-400 text-zinc-200 focus:border-zinc-600 focus:ring-0">
+					{pages.map(page => {
+						if (selpg == page) {
+							return <option selected value={page}>{page}</option>
+						} else {
+							return <option value={page}>{page}</option>
+						}
+					})}
+				</select>
+			</div>
 		</div>
 	</div>
 
 	<div id="main" data-emp="0" class="m-6 mt-0 mr-16 ml-16 unhighlightable">
 		{userData.jobs.map(job => {
 			return (
-				<div id={job.name} class="hidden">
-					<div class="mt-12 grid lg:grid-cols-4 gap-3">
+				<div id={`${job.name}-Overview`} class="hidden">
+					<div class="bg-zinc-800 rounded-lg px-4 py-3">
+						<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">Activity Overview</p>
+						<p class="text-sm text-zinc-400 ml-2">Overview of all employees and their activity for this month.</p>
+						<div class="grid grid-cols-4 gap-2 m-2 text-sm">
+							<p class="text-red-500 text-center">Less than 1h</p>
+							<p class="text-orange-500 text-center">More than 1h</p>
+							<p class="text-yellow-500 text-center">More than 3h</p>
+							<p class="text-green-500 text-center">More than 5h</p>
+						</div>
+						<div class="border-b border-zinc-700 m-2"></div>
+						<div class="grid grid-cols-2 lg:grid-cols-4 gap-2 m-2 text-xs">
+							{job.employees.map(employee => {
+								let length = 0
+
+								if (employee.sessions != undefined) {
+									employee.sessions.map(session => {
+										if (session.month == (new Date().toLocaleDateString("en-GB").split("/")[2] + "-" + new Date().toLocaleDateString("en-GB").split("/")[1])) {
+											length += session.length
+										}
+									})
+								}
+
+								return (
+									<div class={`text-left ${length >= 18000 ? "text-green-500" : (length >= 10800 ? "text-yellow-500" : (length >= 3600 ? "text-orange-500" : "text-red-500"))}`}>
+										{employee.name}
+									</div>
+								)
+							})}
+						</div>
+					</div>
+				</div>
+
+				<div id={`${job.name}-Settings`} class="hidden">
+					<div class="lg:col-span-4 grid lg:grid-cols-2 gap-3">
+						<div>
+							<div class="bg-zinc-800 rounded-lg px-4 py-3">
+								<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{job.name} Permissions</p>
+								
+								<div class="grid gap-4 lg:grid-cols-2 mt-3 mb-2 ml-2 mr-2">
+									{job.settings.map(stt => {
+										const setting = job.setting[stt]
+
+										return (
+											<div>
+												<p class="mb-1 uppercase text-xs text-zinc-400 font-bold">{setting.name} <span id={`${job.name}-${stt}-status`}></span></p>
+												<select id={`${job.name}-${stt}`} onchange={`updateSetting("${job.name}", "${stt}")`} class="border text-xs rounded-lg focus:ring-0 focus:border-zinc-600 w-full block p-2.5 py-1 bg-zinc-600 border-zinc-600 placeholder-zinc-400 text-zinc-300 focus:ring-blue-500 focus:border-blue-500">
+													{job.ranks.map(rank => {
+														if ((job.ranks.indexOf(rank) + 1) == setting.value) {
+															return <option selected value={job.ranks.indexOf(rank) + 1}>{rank}</option>
+														} else {
+															return <option value={job.ranks.indexOf(rank) + 1}>{rank}</option>
+														}
+													})}
+												</select>
+											</div>
+										)
+									})}
+								</div>
+							</div>
+
+							<div class="mt-3 bg-zinc-800 rounded-lg px-4 py-3">
+								<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{job.name} Data Import</p>
+								<p class="text-sm text-zinc-400 ml-2">Import clockin data, please only use this if you know how to.</p>
+								<input type="file" class="rounded-lg bg-zinc-700 text-xs m-2 w-86 text-zinc-400 border border-zinc-600" name="inputfile" id="inputfile">
+							</div>
+						</div>
+
+						<div>
+							<div class="bg-zinc-800 rounded-lg px-4 py-3">
+								<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">Audit Log</p>
+								<p class="text-sm text-zinc-400 ml-2">Admin actions, employee creation, deletion and editing logs.</p>
+								<div class="m-2 grid grid-cols-1 gap-2">
+									{job.audit != undefined ? job.audit.map(log => {
+										return (
+											<div class="text-xs text-zinc-300">
+												<span class="text-zinc-400">{log.user}</span> <span class="text-zinc-500 italic">({new Date(Number(log.time * 1000)).toLocaleString("en-GB")})</span>
+												<p>{log.msg}</p>
+												{log.comments.map(comment => {
+													if (comment != "" && comment != " ") {
+														return <p class="ml-4"> - {comment}</p>
+													}
+												})}
+											</div>
+										)
+									}) : ""}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id={`${job.name}-Employee Tracker`} class="hidden">
+					<div class="mt-0 grid lg:grid-cols-4 gap-3">
 						<div id={`${job.name}-create-modal`} tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
 							<div class="relative w-full max-w-md max-h-full">
 								<div class="relative rounded-lg shadow bg-zinc-700">
@@ -133,7 +245,7 @@ function secondsToHms(d) {
 
 							<button id="ignore" data-modal-target={`${job.name}-create-modal`} data-modal-toggle={`${job.name}-create-modal`} type="button" class="mt-3 px-3 py-1 text-xs text-zinc-300 rounded bg-zinc-700 border transition-colors border-zinc-800 hover:border-yellow-300">Create Employee</button>
 						</div>
-						<div id={`${job.name}-employ-d`} class="bg-zinc-800 rounded-lg lg:col-span-3 px-4 py-3">
+						<div id={`${job.name}-employ-d`} class="h-min bg-zinc-800 rounded-lg lg:col-span-3 px-4 py-3">
 							{job.employees.map(employee => {
 								let total = 0
 								let timeMap = {};
@@ -292,69 +404,6 @@ function secondsToHms(d) {
 								)
 							})}
 						</div>
-
-						<div class="lg:col-span-4 grid lg:grid-cols-2 gap-3">
-							<div>
-								<div class="bg-zinc-800 rounded-lg px-4 py-3">
-									<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">Activity Overview</p>
-									<p class="text-sm text-zinc-400 ml-2">Overview of all employees and their activity for this month.</p>
-									<div class="grid grid-cols-4 gap-2 m-2 text-sm">
-										<p class="text-red-500 text-center">Less than 1h</p>
-										<p class="text-orange-500 text-center">More than 1h</p>
-										<p class="text-yellow-500 text-center">More than 3h</p>
-										<p class="text-green-500 text-center">More than 5h</p>
-									</div>
-									<div class="border-b border-zinc-700 m-2"></div>
-									<div class="grid grid-cols-2 lg:grid-cols-3 gap-2 m-2 text-xs">
-										{job.employees.map(employee => {
-											let length = 0
-
-											if (employee.sessions != undefined) {
-												employee.sessions.map(session => {
-													if (session.month == (new Date().toLocaleDateString("en-GB").split("/")[2] + "-" + new Date().toLocaleDateString("en-GB").split("/")[1])) {
-														length += session.length
-													}
-												})
-											}
-
-											return (
-												<div class={`text-left ${length >= 18000 ? "text-green-500" : (length >= 10800 ? "text-yellow-500" : (length >= 3600 ? "text-orange-500" : "text-red-500"))}`}>
-													{employee.name}
-												</div>
-											)
-										})}
-									</div>
-								</div>
-
-								<div class="mt-3 bg-zinc-800 rounded-lg px-4 py-3">
-									<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">{job.name} Data Import</p>
-									<p class="text-sm text-zinc-400 ml-2">Import clockin data, please only use this if you know how to.</p>
-									<input type="file" class="rounded-lg bg-zinc-700 text-xs m-2 w-86 text-zinc-400 border border-zinc-600" name="inputfile" id="inputfile">
-								</div>
-							</div>
-
-							<div>
-								<div class="bg-zinc-800 rounded-lg px-4 py-3">
-									<p class="text-2xl font-semibold text-zinc-200 ml-2 mt-2">Audit Log</p>
-									<p class="text-sm text-zinc-400 ml-2">Admin actions, employee creation, deletion and editing logs.</p>
-									<div class="m-2 grid grid-cols-1 gap-2">
-										{job.audit != undefined ? job.audit.map(log => {
-											return (
-												<div class="text-xs text-zinc-300">
-													<span class="text-zinc-400">{log.user}</span> <span class="text-zinc-500 italic">({new Date(Number(log.time * 1000)).toLocaleString("en-GB")})</span>
-													<p>{log.msg}</p>
-													{log.comments.map(comment => {
-														if (comment != "" && comment != " ") {
-															return <p class="ml-4"> - {comment}</p>
-														}
-													})}
-												</div>
-											)
-										}) : ""}
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 			)
@@ -365,8 +414,10 @@ function secondsToHms(d) {
 <script client::only>
 	function updateSelected() {
 		filter = document.getElementById("selected-job").value
+		filter2 = document.getElementById("selected-page").value
 		main = document.getElementById("main");
 		children = main.children
+		location.hash = filter2 + "-" +main.dataset.emp
 
 		employees = document.getElementById(`${filter}-employ`);
 		children2 = employees.children
@@ -376,7 +427,7 @@ function secondsToHms(d) {
 
 		for (var i = 0; i < children.length; i++) {
 			var child = children[i];
-			if (child.id.startsWith(filter)) {
+			if (child.id.startsWith(filter + "-" + filter2)) {
 				child.className = "mb-12 lg:ml-6 lg:mr-6"
 			} else {
 				child.className = "hidden"
@@ -411,7 +462,7 @@ function secondsToHms(d) {
 			}
 		}
 
-		main.scrollIntoView({behavior: 'smooth'})
+		//main.scrollIntoView({behavior: 'smooth'})
 	}
 
 	function updateEmp(i) {
@@ -422,7 +473,7 @@ function secondsToHms(d) {
 
 	function resetSelected(i) {
 		main = document.getElementById("main");
-		location.replace("?j=" + document.getElementById("selected-job").value)
+		location.replace("?j=" + document.getElementById("selected-job").value + "#" + document.getElementById("selected-page").value + "-0")
 	}
 
 	document.getElementById('inputfile').addEventListener('change', function () {
@@ -559,11 +610,40 @@ function secondsToHms(d) {
 			})
 	}
 
+	function updateSetting(job, key) {
+		const status = document.getElementById(job + "-" + key + "-status")
+		status.className = "animate-spin fa-solid fa-spinner ml-1 text-zinc-500"
+
+		fetch(`https://api.techstreet.tech/highlife/setting/?token=${getCookie("access_token")}&job=${job}&key=${key}&value=${document.getElementById(job + "-" + key).value}`)
+			.then(response => response.text())
+			.then(res => {
+				status.className = "fa-solid fa-circle-check ml-1 text-green-500"
+			})
+	}
+
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
+
+	const page = location.hash.split("-")[0].replace("#", "").replace("%20", " ")
+	const ind = location.hash.split("-")[1]
+
+	document.getElementById("main").dataset.emp = ind
+	selected = document.getElementById("selected-page");
+	children = selected.children
+	
+	for (var i = 0; i < children.length; i++) {
+		var child = children[i];
+		console.log(child.value, page)
+		if (child.value.startsWith(page)) {
+			child.selected = true
+		} else {
+			child.selected = false
+		}
+	}
+
 
 	updateSelected()
 </script>

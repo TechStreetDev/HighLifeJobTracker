@@ -8,6 +8,6 @@ export interface APIUserResponse {
 	accessed: string;
 }
 
-export default async function getUser(token: string) {
-	return await api.get<APIUserResponse>(`user/?token=${token}`);
+export default async function getUser(token: string, selected: string) {
+	return await api.get<APIUserResponse>(`user/?token=${token}&selected=${selected}`);
 }
