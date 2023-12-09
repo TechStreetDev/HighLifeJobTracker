@@ -120,7 +120,7 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 
 						<div class="relative overflow-x-auto shadow-md m-2 mt-4 rounded-lg">
 							<table class="w-full text-sm text-left text-zinc-300">
-								<thead class="text-xs uppercase bg-zinc-700 text-zinc-300">
+								<thead class="text-xs uppercase bg-zinc-600 text-zinc-300">
 									<tr>
 										<th scope="col" class="px-6 py-3">
 											Player
@@ -143,9 +143,9 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 									{job.loas.map(loa => {
 										if (!((Date.now() / 1000) >= loa.end) && (Date.now() / 1000) >= loa.start) {
 											return (
-												<tr class="border-b bg-zinc-800 border-[#333333]">
-													<th scope="row" class="px-6 py-2 font-medium whitespace-nowrap">
-														<div class="font-bold text-l text-zinc-200">{loa.name ? loa.name : loa.steam}</div>
+												<tr class="border-b bg-zinc-700 border-[#343434]">
+													<th scope="row" class="px-6 py-3 whitespace-nowrap">
+														<div class="font-semibold text-l text-zinc-200">{loa.name ? loa.name : loa.steam}</div>
 													</th>
 
 													<td class="px-6">
@@ -162,9 +162,9 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 
 													<td class="px-6 text-right">
 														{(Date.now() / 1000) >= loa.end ? () => {
-															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-2 mt-0 ml-3 text-zinc-300">Finished</span>
+															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-zinc-300">Finished</span>
 														}: ((Date.now() / 1000) >= loa.start ? () => {
-															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-2 mt-0 ml-3 text-white">Active</span>
+															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-white">Active</span>
 														} : "")}
 													</td>
 												</tr>
@@ -175,9 +175,9 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 									{job.loas.map(loa => {
 										if (!(!((Date.now() / 1000) >= loa.end) && (Date.now() / 1000) >= loa.start)) {
 											return (
-												<tr class="border-b bg-zinc-800 text-zinc-500 border-[#333333]">
-													<th scope="row" class="px-6 py-2 font-medium whitespace-nowrap">
-														<div class="font-bold text-l">{loa.name ? loa.name : loa.steam}</div>
+												<tr class="border-b bg-zinc-800 text-zinc-500 border-[#343434]">
+													<th scope="row" class="px-6 py-3 whitespace-nowrap">
+														<div class="font-semibold text-l">{loa.name ? loa.name : loa.steam}</div>
 													</th>
 
 													<td class="px-6">
@@ -194,9 +194,9 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 
 													<td class="px-6 text-right">
 														{(Date.now() / 1000) >= loa.end ? () => {
-															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-2 mt-0 ml-3 text-zinc-300">Finished</span>
+															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-zinc-300">Finished</span>
 														}: ((Date.now() / 1000) >= loa.start ? () => {
-															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-2 mt-0 ml-3 text-white">Active</span>
+															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-white">Active</span>
 														} : "")}
 													</td>
 												</tr>
