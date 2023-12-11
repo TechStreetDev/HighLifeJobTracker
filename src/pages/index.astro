@@ -141,7 +141,7 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 								</thead>
 								<tbody>
 									{job.loas.map(loa => {
-										if (!((Date.now() / 1000) >= loa.end) && (Date.now() / 1000) >= loa.start) {
+										if (loa.active) {
 											return (
 												<tr class="border-b bg-zinc-700 border-[#343434]">
 													<th scope="row" class="px-6 py-3 whitespace-nowrap">
@@ -161,11 +161,7 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 													</td>
 
 													<td class="px-6 text-right">
-														{(Date.now() / 1000) >= loa.end ? () => {
-															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-zinc-300">Finished</span>
-														}: ((Date.now() / 1000) >= loa.start ? () => {
-															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-white">Active</span>
-														} : "")}
+														<span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-white">Active</span>
 													</td>
 												</tr>
 											)
@@ -173,9 +169,9 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 									})}
 
 									{job.loas.map(loa => {
-										if (!(!((Date.now() / 1000) >= loa.end) && (Date.now() / 1000) >= loa.start)) {
+										if (!loa.active) {
 											return (
-												<tr class="border-b bg-zinc-800 text-zinc-500 border-[#343434]">
+												<tr class="border-b bg-zinc-700 text-zinc-500 border-[#343434]">
 													<th scope="row" class="px-6 py-3 whitespace-nowrap">
 														<div class="font-semibold text-l">{loa.name ? loa.name : loa.steam}</div>
 													</th>
@@ -193,11 +189,7 @@ if (userData.jobs[0].rank >= userData.jobs[0].setting.modify_settings.value) {
 													</td>
 
 													<td class="px-6 text-right">
-														{(Date.now() / 1000) >= loa.end ? () => {
-															return <span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-zinc-300">Finished</span>
-														}: ((Date.now() / 1000) >= loa.start ? () => {
-															return <span class="font-bold flex-initial rounded bg-red-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-white">Active</span>
-														} : "")}
+														<span class="font-bold flex-initial rounded bg-zinc-600 text-xs px-2 py-0.5 m-1 mt-0 ml-2 text-zinc-300">Expired</span>
 													</td>
 												</tr>
 											)
