@@ -1,20 +1,9 @@
-# STARLIGHT DASHBOARD
+# HighLife Job Tracker
+The front end to my custom HighLife Job Tracker tracking clock in data from a live-clock-ins channel
 
 ```
- ________  _________  ________  ________  ___       ___  ________  ___  ___  _________
-|\   ____\|\___   ___\\   __  \|\   __  \|\  \     |\  \|\   ____\|\  \|\  \|\___   ___\
-\ \  \___|\|___ \  \_\ \  \|\  \ \  \|\  \ \  \    \ \  \ \  \___|\ \  \\\  \|___ \  \_|
- \ \_____  \   \ \  \ \ \   __  \ \   _  _\ \  \    \ \  \ \  \  __\ \   __  \   \ \  \
-  \|____|\  \   \ \  \ \ \  \ \  \ \  \\  \\ \  \____\ \  \ \  \|\  \ \  \ \  \   \ \  \
-    ____\_\  \   \ \__\ \ \__\ \__\ \__\\ _\\ \_______\ \__\ \_______\ \__\ \__\   \ \__\
-   |\_________\   \|__|  \|__|\|__|\|__|\|__|\|_______|\|__|\|_______|\|__|\|__|    \|__|
-   \|_________|
-```
-
 Framework: AstroJS  
 Add-ons:
-
 -   tailwind
 -   cloudflare
-
-_use editorconfig extension for your IDE so the coding style is the same._
+```
